@@ -1,0 +1,114 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+/**
+ * @title EscrowSmartContract
+ * @dev A smart contract for handling escrow transactions securely between two parties.
+ */
+contract Escrow {
+    // Variables
+    address public buyer;
+    address public seller;
+    address public escrowAgent;
+    uint256 public amount;
+    bool public fundsDeposited;
+    bool public buyerApproval;
+    bool public sellerApproval;
+
+    // Events
+    event Deposit(address indexed buyer, uint256 amount);
+    event Approval(address indexed party, string role);
+    event ReleaseFunds(address indexed seller, uint256 amount);
+    event Refund(address indexed buyer, uint256 amount);
+
+    // Modifiers
+    modifier onlyBuyer() {
+        require(msg.sender == buyer, "Only the buyer can call this function.");
+        _;
+    }
+
+    modifier onlyEscrowAgent() {
+        require(msg.sender == escrowAgent, "Only the escrow agent can call this function.");
+        _;
+    }
+
+    modifier onlySeller() {
+        require(msg.sender == seller, "Only the seller can call this function.");
+        _;
+    }
+
+    // Constructor
+    constructor(address _buyer, address _seller, address _escrowAgent, uint256 _amount) {
+        require(_buyer != address(0) && _seller != address(0) && _escrowAgent != address(0), "Invalid address provided.");
+        require(_amount > 0, "Amount must be greater than zero.");
+
+        buyer = _buyer;
+        seller = _seller;
+        escrowAgent = _escrowAgent;
+        amount = _amount;
+        fundsDeposited = false;
+        buyerApproval = false;
+        sellerApproval = false;
+    }
+
+    /**
+     * @dev Buyer deposits funds into the contract.
+     */
+    function depositFunds() external payable onlyBuyer {
+        require(!fundsDeposited, "Funds have already been deposited.");
+        require(msg.value == amount, "Incorrect deposit amount.");
+
+        fundsDeposited = true;
+        emit Deposit(msg.sender, msg.value);
+    }
+
+    /**
+     * @dev Buyer approves the release of funds.
+     */
+    function approveByBuyer() external onlyBuyer {
+        buyerApproval = true;
+        emit Approval(msg.sender, "Buyer");
+        _checkApprovalAndRelease();
+    }
+
+    /**
+     * @dev Seller approves the release of funds.
+     */
+    function approveBySeller() external onlySeller {
+        sellerApproval = true;
+        emit Approval(msg.sender, "Seller");
+        _checkApprovalAndRelease();
+    }
+
+    /**
+     * @dev Escrow agent releases funds to the seller if both parties approve.
+     */
+    function _checkApprovalAndRelease() internal {
+        if (buyerApproval && sellerApproval && fundsDeposited) {
+            payable(seller).transfer(amount);
+            emit ReleaseFunds(seller, amount);
+            _resetState();
+        }
+    }
+
+    /**
+     * @dev Escrow agent refunds the buyer if both parties fail to approve.
+     */
+    function refundToBuyer() external onlyEscrowAgent {
+        require(fundsDeposited, "No funds to refund.");
+        require(!buyerApproval || !sellerApproval, "Cannot refund if both parties approve.");
+
+        payable(buyer).transfer(amount);
+        emit Refund(buyer, amount);
+        _resetState();
+    }
+
+    /**
+     * @dev Resets the contract state after completion of a transaction.
+     */
+    function _resetState() internal {
+        fundsDeposited = false;
+        buyerApproval = false;
+        sellerApproval = false;
+    }
+}
