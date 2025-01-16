@@ -1,4 +1,4 @@
-# SmartContractExample
+# Smart Contract Example
 
 
 **This smart contract manages an escrow system between a buyer, seller, and an escrow agent. Let's break it down:**
