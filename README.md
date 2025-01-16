@@ -3,7 +3,7 @@
 
 **This smart contract manages an escrow system between a buyer, seller, and an escrow agent. Let's break it down:**
 
-1. License & Version:
+*1. License & Version:*
 
 
 **// SPDX-License-Identifier: MIT
@@ -13,7 +13,7 @@ pragma solidity ^0.8.0;**
 - Declares the version of Solidity that the contract is written for (0.8.0 or higher).
 
 
-2. Contract Declaration:
+*2. Contract Declaration:*
 
 **contract Escrow {**
 
@@ -21,7 +21,7 @@ pragma solidity ^0.8.0;**
 
 
 
-3. State Variables:
+*3. State Variables:*
 
 **address public buyer;
 address public seller;
@@ -38,7 +38,7 @@ bool public sellerApproval;**
 
 
 
-4. Events
+*4. Events*
 
 **event Deposit(address indexed buyer, uint256 amount);
 event Approval(address indexed party, string role);
@@ -52,7 +52,7 @@ event Refund(address indexed buyer, uint256 amount);**
 
 
 
-5. Modifiers
+*5. Modifiers*
 
 **modifier onlyBuyer() { ... }
 modifier onlyEscrowAgent() { ... }
@@ -62,7 +62,7 @@ modifier onlySeller() { ... }**
 
 
 
-6. Constructor
+*6. Constructor*
 
 
 **constructor(address _buyer, address _seller, address _escrowAgent, uint256 _amount) { ... }**
@@ -71,7 +71,7 @@ modifier onlySeller() { ... }**
 
 
 
-7. Buyer Deposit Function
+*7. Buyer Deposit Function*
 
 
 **function depositFunds() external payable onlyBuyer { ... }**
@@ -81,7 +81,7 @@ modifier onlySeller() { ... }**
 
 
 
-8. Buyer Approval
+*8. Buyer Approval*
 
 
 **function approveByBuyer() external onlyBuyer { ... }**
@@ -91,7 +91,7 @@ modifier onlySeller() { ... }**
 
 
 
-9. Seller Approval
+*9. Seller Approval*
 
 **function approveBySeller() external onlySeller { ... }**
 
@@ -101,7 +101,7 @@ modifier onlySeller() { ... }**
 
 
 
-10. Internal Fund Release Logic
+*10. Internal Fund Release Logic*
 
 **function _checkApprovalAndRelease() internal { ... }**
 
@@ -110,7 +110,7 @@ modifier onlySeller() { ... }**
 
 
 
-11. Refund Function
+*11. Refund Function*
 
 **function refundToBuyer() external onlyEscrowAgent { ... }**
 
