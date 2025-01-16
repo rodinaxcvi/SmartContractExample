@@ -17,7 +17,7 @@ pragma solidity ^0.8.0;**
 
 **contract Escrow {**
 
--The contract is named Escrow.
+- The contract is named Escrow.
 
 
 
