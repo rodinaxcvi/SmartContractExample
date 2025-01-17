@@ -119,7 +119,7 @@ modifier onlySeller() { ... }**
 
 
 
-12. State Reset Function
+*12. State Reset Function*
 
 **function _resetState() internal { ... }**
 
